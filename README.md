@@ -19,7 +19,7 @@ Open the sub page, repeat the opreations above.
 ```swift
 father = The id that you got at Start (String)
 token = The Integrations token (String)
-let drive = NotionDrive(.init(), token: token)
+let drive = NotionDrive(.init(father), token: token)
 ```
 
 ## Upload
