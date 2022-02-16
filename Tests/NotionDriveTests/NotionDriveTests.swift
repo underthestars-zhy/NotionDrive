@@ -2,9 +2,9 @@ import XCTest
 @testable import NotionDrive
 
 final class NotionDriveTests: XCTestCase {
-    let token = "{your token}"
-    let file = "{your file name}"
-    let father = "{your father file id}"
+    let token = "{notion token}"
+    let file = "{file name}"
+    let father = "{father file}"
     
     func testGetPages() async throws {
         print(try await NotionDrive.getAllPages(token))
@@ -14,17 +14,22 @@ final class NotionDriveTests: XCTestCase {
         let drive = NotionDrive(.init(father), token: token)
         guard let url = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first else { return }
         let data = try Data(contentsOf: url.appendingPathComponent(file))
-        guard let uuid = try await drive.upload(data, name: UUID().uuidString) else { return }
+        let uuid = try await drive.upload(data, name: UUID().uuidString) { (uploaded, all) in
+            print("\((Double(uploaded) / Double(all)) * 100)%")
+        }
+        guard let uuid = uuid  else { return }
         
         print(uuid.uuidString)
     }
     
     func testDonwload() async throws {
-        guard let uuid = UUID(uuidString: "{testUplpad output}") else { return }
+        guard let uuid = UUID(uuidString: "{uuid from testUpload}") else { return }
         let drive = NotionDrive(.init(father), token: token)
-        let data = try await drive.download(uuid)
+        let data = try await drive.download(uuid) { (uploaded, all) in
+            print("\((Double(uploaded) / Double(all)) * 100)%")
+        }
         guard let url = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first else { return }
-        try data?.write(to: url.appendingPathComponent("{new file name}"))
+        try data?.write(to: url.appendingPathComponent("{file name (download)}"))
     }
     
     func testStringSub() throws {
