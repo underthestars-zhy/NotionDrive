@@ -41,3 +41,15 @@ Sometimes, you cannot download the file. Try again.
 uuid = The uuid you saved at Upload (UUID)
 let data = try await drive.download(uuid)
 ```
+
+## Progress
+
+```swift
+let data = try await drive.download(uuid) { (downloaded, total) in 
+    
+}
+
+try await drive.upload(data, name: UUID().uuidString) { (uploaded, total) in 
+    
+}
+```
